@@ -33,7 +33,7 @@ export default function Navbar() {
             <a 
               key={link} 
               href={`/#${link === 'Contact' ? 'contact-form' : link.toLowerCase()}`}
-              className="text-xs font-mono uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors relative group"
+              className="text-xs font-mono uppercase tracking-[0.2em] text-white hover:text-[#FF7A00] transition-colors relative group font-semibold"
             >
               {link}
               <span className="absolute -bottom-2 left-0 w-0 h-px bg-[#FF7A00] transition-all duration-300 group-hover:w-full"/>

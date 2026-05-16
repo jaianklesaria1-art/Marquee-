@@ -1,8 +1,73 @@
-import { motion } from 'motion/react';
-import { Send, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Send, Check, ChevronDown } from 'lucide-react';
 import BorderGlow from './BorderGlow';
+import { useState, useEffect } from 'react';
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    inquiryType: 'Request a Quotation',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // Clear form after success
+  useEffect(() => {
+    if (isSuccess) {
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        inquiryType: 'Request a Quotation',
+        message: ''
+      });
+      const timer = setTimeout(() => setIsSuccess(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSuccess]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMsg('');
+    
+    const target = e.currentTarget;
+    const data = new FormData(target);
+    
+    // Using FormData prevents CORS preflight issues that often cause "Failed to fetch"
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(Object.fromEntries(data))
+      });
+      
+      if (response.ok) {
+        setIsSuccess(true);
+      } else {
+        const result = await response.json();
+        if (Object.hasOwn(result, 'errors')) {
+          setErrorMsg(result["errors"].map((err: any) => err["message"]).join(", "));
+        } else {
+          setErrorMsg("Oops! There was a problem submitting your form.");
+        }
+      }
+    } catch (error: any) {
+      setErrorMsg("Network error: Failed to fetch. This usually happens if an adblocker (like uBlock) or privacy extension (like Brave Shields) is blocking Formspree.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section id="contact-form" className="py-32 relative z-10 bg-[#050505] overflow-hidden border-t border-white/5">
       {/* Background decorations */}
@@ -34,8 +99,8 @@ export default function Contact() {
               </div>
               <div>
                 <span className="text-xs text-neutral-500 uppercase tracking-widest font-semibold block mb-2">Inquiries</span>
-                <a href="mailto:info@marqueefins.com" className="text-2xl text-white hover:text-[#FF7A00] transition-colors duration-300">
-                  info@marqueefins.com
+                <a href="mailto:projects@marqueearch.com" className="text-2xl text-white hover:text-[#FF7A00] transition-colors duration-300">
+                  projects@marqueearch.com
                 </a>
               </div>
             </div>
@@ -64,14 +129,18 @@ export default function Contact() {
                 {/* Top Accent */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF7A00] via-[#FF7A00]/50 to-transparent" />
                 
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                  <input type="hidden" name="_subject" value={`Marquee Fins Inquiry: ${formData.inquiryType} from ${formData.name}`} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2 group relative">
                     <label htmlFor="name" className="text-xs text-neutral-400 font-mono uppercase tracking-wider group-focus-within:text-[#FF7A00] transition-colors">Full Name *</label>
                     <input 
                       type="text" 
                       id="name" 
+                      name="name"
                       required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full bg-[#111]/50 border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-neutral-700 focus:outline-none focus:border-[#FF7A00] focus:ring-1 focus:ring-[#FF7A00] focus:shadow-[0_0_20px_rgba(255,122,0,0.3)] transition-all duration-300"
                       placeholder="John Doe"
                     />
@@ -81,7 +150,10 @@ export default function Contact() {
                     <input 
                       type="email" 
                       id="email" 
+                      name="email"
                       required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full bg-[#111]/50 border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-neutral-700 focus:outline-none focus:border-[#FF7A00] focus:ring-1 focus:ring-[#FF7A00] focus:shadow-[0_0_20px_rgba(255,122,0,0.3)] transition-all duration-300"
                       placeholder="john@company.com"
                     />
@@ -94,6 +166,9 @@ export default function Contact() {
                     <input 
                       type="tel" 
                       id="phone" 
+                      name="phone"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full bg-[#111]/50 border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-neutral-700 focus:outline-none focus:border-[#FF7A00] focus:ring-1 focus:ring-[#FF7A00] focus:shadow-[0_0_20px_rgba(255,122,0,0.3)] transition-all duration-300"
                       placeholder="+91 98765 43210"
                     />
@@ -103,6 +178,9 @@ export default function Contact() {
                     <input 
                       type="text" 
                       id="company" 
+                      name="company"
+                      value={formData.company}
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                       className="w-full bg-[#111]/50 border border-white/10 rounded-md px-4 py-3 text-white placeholder:text-neutral-700 focus:outline-none focus:border-[#FF7A00] focus:ring-1 focus:ring-[#FF7A00] focus:shadow-[0_0_20px_rgba(255,122,0,0.3)] transition-all duration-300"
                       placeholder="Enter company name"
                     />
@@ -114,13 +192,16 @@ export default function Contact() {
                   <div className="relative">
                     <select 
                       id="inquiry-type" 
+                      name="inquiryType"
+                      value={formData.inquiryType}
+                      onChange={(e) => setFormData({ ...formData, inquiryType: e.target.value })}
                       className="w-full bg-[#111]/50 border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-[#FF7A00] focus:ring-1 focus:ring-[#FF7A00] focus:shadow-[0_0_20px_rgba(255,122,0,0.3)] transition-all duration-300 appearance-none cursor-pointer"
                     >
-                      <option value="quotation" className="bg-[#111]">Request a Quotation</option>
-                      <option value="technical" className="bg-[#111]">Technical Information</option>
-                      <option value="samples" className="bg-[#111]">Request Product Samples</option>
-                      <option value="partnership" className="bg-[#111]">Distributor / Partnership</option>
-                      <option value="other" className="bg-[#111]">Other</option>
+                      <option value="Request a Quotation" className="bg-[#111]">Request a Quotation</option>
+                      <option value="Technical Information" className="bg-[#111]">Technical Information</option>
+                      <option value="Request Product Samples" className="bg-[#111]">Request Product Samples</option>
+                      <option value="Distributor / Partnership" className="bg-[#111]">Distributor / Partnership</option>
+                      <option value="Other" className="bg-[#111]">Other</option>
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none group-focus-within:text-[#FF7A00] transition-colors" />
                   </div>
@@ -130,22 +211,69 @@ export default function Contact() {
                   <label htmlFor="message" className="text-xs text-neutral-400 font-mono uppercase tracking-wider group-focus-within:text-[#FF7A00] transition-colors">Project Details / Message</label>
                   <textarea 
                     id="message" 
+                    name="message"
                     rows={4}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full bg-[#111]/50 border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-[#FF7A00] focus:ring-1 focus:ring-[#FF7A00] focus:shadow-[0_0_20px_rgba(255,122,0,0.3)] transition-all duration-300 resize-none placeholder:text-neutral-700"
                     placeholder="Tell us about your project requirements..."
                   ></textarea>
                 </div>
 
                 <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-6">
-                  <p className="text-xs text-neutral-500 max-w-[250px] text-center sm:text-left">
-                    Your information is secure and will never be shared with third parties.
-                  </p>
+                  <div className="text-xs text-neutral-500 max-w-[250px] text-center sm:text-left">
+                    {isSuccess 
+                      ? <span className="text-green-500">Message sent successfully! We'll be in touch soon.</span>
+                      : <>
+                          {errorMsg && <div className="text-red-500 pb-2 font-bold">{errorMsg}</div>}
+                          <span>Your information is secure and will never be shared with third parties.</span>
+                        </>
+                    }
+                  </div>
                   <button 
                     type="submit"
-                    className="group w-full sm:w-auto flex items-center justify-center gap-3 bg-[#FF7A00] text-black font-bold uppercase tracking-wide rounded-md px-8 py-4 hover:bg-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] transition-all duration-300"
+                    disabled={isSubmitting || isSuccess}
+                    className={`group w-full sm:w-auto flex items-center justify-center font-bold uppercase tracking-wide rounded-md px-8 py-4 transition-all duration-300 relative overflow-hidden ${
+                      isSuccess 
+                        ? 'bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.4)]' 
+                        : 'bg-[#FF7A00] text-black hover:bg-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed'
+                    }`}
                   >
-                    <span>Submit</span>
-                    <Send className="w-4 h-4 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
+                    <AnimatePresence mode="wait">
+                      {isSubmitting ? (
+                        <motion.span 
+                          key="submitting" 
+                          initial={{ opacity: 0, y: 10 }} 
+                          animate={{ opacity: 1, y: 0 }} 
+                          exit={{ opacity: 0, y: -10 }}
+                          className="flex items-center gap-2"
+                        >
+                          Sending...
+                        </motion.span>
+                      ) : isSuccess ? (
+                        <motion.span 
+                          key="success" 
+                          initial={{ opacity: 0, scale: 0.8 }} 
+                          animate={{ opacity: 1, scale: 1 }} 
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          className="flex items-center gap-2"
+                        >
+                          <span>Submitted</span>
+                          <Check className="w-5 h-5 font-bold" />
+                        </motion.span>
+                      ) : (
+                        <motion.span 
+                          key="default" 
+                          initial={{ opacity: 0, y: 10 }} 
+                          animate={{ opacity: 1, y: 0 }} 
+                          exit={{ opacity: 0, y: -10 }}
+                          className="flex items-center gap-3"
+                        >
+                          <span>Submit</span>
+                          <Send className="w-4 h-4 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </button>
                 </div>
               </form>
