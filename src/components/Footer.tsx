@@ -15,7 +15,7 @@ export default function Footer() {
          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left border-t border-white/10 pt-16">
             <div>
               <span className="text-xs font-mono text-[#FF7A00] uppercase tracking-widest block mb-6">Contact</span>
-              <a href="mailto:projects@marqueearch.com" className="text-xl text-white hover:text-[#FF7A00] transition-colors block mb-2">projects@marqueearch.com</a>
+              <a href="mailto:projects@marqueefins.com" className="text-xl text-white hover:text-[#FF7A00] transition-colors block mb-2">projects@marqueefins.com</a>
               <p className="text-neutral-400 font-normal">+91 22 2868 2751 | 2489</p>
             </div>
             
@@ -42,7 +42,7 @@ export default function Footer() {
          
          <div className="mt-32 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-neutral-500 uppercase tracking-widest">
            <p className="text-neutral-400">© {new Date().getFullYear()} Marquee uPVC Architectural Fins.</p>
-           <a href="http://marqueearch.com" className="hover:text-white transition-colors">MarqueeArch.com</a>
+           <a href="http://marqueefins.com" className="hover:text-white transition-colors">Marqueefins.com</a>
          </div>
 
       </div>

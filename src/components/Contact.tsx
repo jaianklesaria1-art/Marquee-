@@ -99,8 +99,8 @@ export default function Contact() {
               </div>
               <div>
                 <span className="text-xs text-neutral-500 uppercase tracking-widest font-semibold block mb-2">Inquiries</span>
-                <a href="mailto:projects@marqueearch.com" className="text-2xl text-white hover:text-[#FF7A00] transition-colors duration-300">
-                  projects@marqueearch.com
+                <a href="mailto:projects@marqueefins.com" className="text-2xl text-white hover:text-[#FF7A00] transition-colors duration-300">
+                  projects@marqueefins.com
                 </a>
               </div>
             </div>
