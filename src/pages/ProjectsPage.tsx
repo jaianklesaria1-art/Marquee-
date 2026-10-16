@@ -13,7 +13,7 @@ const allProjects = [
   { name: "Ashford Pallazzo", image: "https://ik.imagekit.io/jai777/Marquee/Ashford%20pallazzo.png?updatedAt=1778511892385" },
   { name: "JP North Clubhouse", image: "https://ik.imagekit.io/jai777/Marquee/jp%20north%20club%20house.png?updatedAt=1778511892258" },
   { name: "Bhagat Grandeur", image: "https://ik.imagekit.io/jai777/Marquee/Bhagat%20grandeur.png?updatedAt=1778511892481" },
-  { name: "JK House", image: "https://ik.imagekit.io/jai777/Marquee/Bhagat%20grandeur.png?updatedAt=1778511892481" },
+  { name: "JK House", image: null }, // no photo yet (it was showing Bhagat Grandeur's)
   { name: "Ajithnath", image: "https://ik.imagekit.io/jai777/Marquee/ajithnath.png?updatedAt=1778511892283" },
   { name: "Spring Grove", image: "https://ik.imagekit.io/jai777/Marquee/spring%20grove.png?updatedAt=1778511891889" },
   { name: "The Address : Panorama", image: "https://ik.imagekit.io/jai777/Marquee/panorama.png?updatedAt=1778511892317" },

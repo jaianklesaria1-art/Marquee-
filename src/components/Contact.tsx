@@ -40,27 +40,24 @@ export default function Contact() {
     const target = e.currentTarget;
     const data = new FormData(target);
     
-    // Post straight to Formspree: the site is static on Netlify, so the /api/contact route in server.ts
-    // only exists in local dev. Sending FormData (no Content-Type header) avoids a CORS preflight.
+    // Emails the enquiry straight to projects@marqueearch.com via FormSubmit. The site is static on Netlify,
+    // so the /api/contact route in server.ts only exists in local dev. FormData (no Content-Type) avoids a preflight.
     try {
-      const response = await fetch('https://formspree.io/f/xjglnjap', {
+      const response = await fetch('https://formsubmit.co/ajax/projects@marqueearch.com', {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
         body: data
       });
-      
-      if (response.ok) {
+      const result = await response.json().catch(() => ({}));
+
+      // FormSubmit answers 200 with success "false" (e.g. before the inbox has activated the form), so check both
+      if (response.ok && String(result.success) === 'true') {
         setIsSuccess(true);
       } else {
-        const result = await response.json();
-        if (Object.hasOwn(result, 'errors')) {
-          setErrorMsg(result["errors"].map((err: any) => err["message"]).join(", "));
-        } else {
-          setErrorMsg("Oops! There was a problem submitting your form.");
-        }
+        setErrorMsg("Sorry, your message didn't go through. Please email us at projects@marqueearch.com.");
       }
     } catch (error: any) {
-      setErrorMsg("Network error: Failed to fetch. This usually happens if an adblocker (like uBlock) or privacy extension (like Brave Shields) is blocking Formspree.");
+      setErrorMsg("Network error: your message couldn't be sent. Please check your connection, or email us at projects@marqueearch.com.");
     } finally {
       setIsSubmitting(false);
     }
@@ -129,8 +126,10 @@ export default function Contact() {
                 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   <input type="hidden" name="_subject" value={`Marquee Fins Inquiry: ${formData.inquiryType} from ${formData.name}`} />
-                  {/* honeypot: Formspree drops any submission where this is filled */}
-                  <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ display: 'none' }} />
+                  <input type="hidden" name="_template" value="table" />
+                  <input type="hidden" name="_captcha" value="false" />
+                  {/* honeypot: FormSubmit drops any submission where this is filled */}
+                  <input type="text" name="_honey" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ display: 'none' }} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2 group relative">
                     <label htmlFor="name" className="text-xs text-neutral-400 font-mono uppercase tracking-wider group-focus-within:text-[#FF7A00] transition-colors">Full Name *</label>
