@@ -40,15 +40,13 @@ export default function Contact() {
     const target = e.currentTarget;
     const data = new FormData(target);
     
-    // Using FormData prevents CORS preflight issues that often cause "Failed to fetch"
+    // Post straight to Formspree: the site is static on Netlify, so the /api/contact route in server.ts
+    // only exists in local dev. Sending FormData (no Content-Type header) avoids a CORS preflight.
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('https://formspree.io/f/xjglnjap', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(Object.fromEntries(data))
+        headers: { 'Accept': 'application/json' },
+        body: data
       });
       
       if (response.ok) {
@@ -131,6 +129,8 @@ export default function Contact() {
                 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   <input type="hidden" name="_subject" value={`Marquee Fins Inquiry: ${formData.inquiryType} from ${formData.name}`} />
+                  {/* honeypot: Formspree drops any submission where this is filled */}
+                  <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ display: 'none' }} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2 group relative">
                     <label htmlFor="name" className="text-xs text-neutral-400 font-mono uppercase tracking-wider group-focus-within:text-[#FF7A00] transition-colors">Full Name *</label>

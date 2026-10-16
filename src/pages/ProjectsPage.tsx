@@ -54,6 +54,26 @@ const allProjects = [
 export default function ProjectsPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  // Own title, description and canonical for /projects (index.html holds the home page's); restored on leave
+  useEffect(() => {
+    const url = 'https://www.marqueefins.com/projects';
+    const desc = 'Selected Marquee facade projects: uPVC fins, louvers and railings on residential towers, hospitals, schools and private homes.';
+    const set = (sel: string, attr: string, val: string) => {
+      const el = document.querySelector(sel);
+      const prev = el?.getAttribute(attr) ?? null;
+      el?.setAttribute(attr, val);
+      return () => { if (el && prev !== null) el.setAttribute(attr, prev); };
+    };
+    const prevTitle = document.title;
+    document.title = 'Projects | Marquee uPVC Architectural Fins';
+    const undo = [
+      set('meta[name="description"]', 'content', desc),
+      set('link[rel="canonical"]', 'href', url),
+      set('meta[property="og:url"]', 'content', url),
+    ];
+    return () => { document.title = prevTitle; undo.forEach((u) => u()); };
+  }, []);
+
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (selectedImage) {

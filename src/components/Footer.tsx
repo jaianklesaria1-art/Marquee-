@@ -42,7 +42,10 @@ export default function Footer() {
          
          <div className="mt-32 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-neutral-500 uppercase tracking-widest">
            <p className="text-neutral-400">© {new Date().getFullYear()} Marquee uPVC Architectural Fins.</p>
-           <a href="http://marqueefins.com" className="hover:text-white transition-colors">Marqueefins.com</a>
+           <div className="flex gap-8">
+             <a href="/privacy.html" className="hover:text-white transition-colors">Privacy</a>
+             <a href="https://www.marqueefins.com" className="hover:text-white transition-colors">Marqueefins.com</a>
+           </div>
          </div>
 
       </div>
